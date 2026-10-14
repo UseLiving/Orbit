@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Orbit Radar</title>
+<meta name="description" content="Live new Solana meme coins: New Pairs, Final Stretch and Migrated, with one-click buys from your own wallet.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jersey+10&family=Pixelify+Sans:wght@400;600;700&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/radar.css">
+</head>
+<body>
+<div class="demo-banner" id="demoBanner" hidden>DEMO MODE · every coin on this board is simulated and trading is switched off</div>
+
+<header class="top">
+  <a class="brand" href="/" aria-label="Orbit home"><svg class="logo" viewBox="0 0 16 16" shape-rendering="crispEdges"></svg><span class="wordmark">ORBIT</span></a>
+  <nav class="tabs" aria-label="Sections">
+    <a href="/#arcade">Arcade</a><a href="/#market">Market</a><a href="/radar" aria-current="page">Radar</a><a href="/#board">Payouts</a>
+  </nav>
+  <div class="top-right">
+    <span class="solchip label" id="solChip" title="SOL price">SOL —</span>
+    <a class="btn small alt xlink" href="https://x.com/TradesOnOrbit" target="_blank" rel="noopener noreferrer" aria-label="Orbit on X (@TradesOnOrbit)" title="@TradesOnOrbit on X">X</a>
+      <button class="btn small" id="walletBtn" type="button">Connect wallet</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="tb-title">
+    <h1>RADAR</h1>
+    <span class="feed label" id="feedState"><i></i><span>Connecting…</span></span>
+  </div>
+  <div class="tb-group">
+    <label class="field" for="qbAmt"><span class="label">Quick buy</span><span class="inp"><input id="qbAmt" type="number" min="0.001" max="100" step="0.01" value="0.1" inputmode="decimal"><em>SOL</em></span></label>
+    <div class="presets" id="qbPresets" aria-label="Quick buy presets">
+      <button type="button" data-v="0.05">0.05</button><button type="button" data-v="0.1">0.1</button><button type="button" data-v="0.25">0.25</button><button type="button" data-v="0.5">0.5</button><button type="button" data-v="1">1</button>
+    </div>
+  </div>
+  <div class="tb-group">
+    <label class="field small" for="slip"><span class="label">Slippage</span><span class="inp"><input id="slip" type="number" min="0.5" max="50" step="0.5" value="15" inputmode="decimal"><em>%</em></span></label>
+    <label class="field small" for="prio"><span class="label">Priority fee</span><span class="inp"><input id="prio" type="number" min="0" max="0.05" step="0.0001" value="0.0005" inputmode="decimal"><em>SOL</em></span></label>
+  </div>
+  <div class="field"><span class="label">Launchpads</span><div class="pads" id="pads" aria-label="Launchpads to show"></div></div>
+  <label class="field grow" for="search"><span class="label">Filter</span><span class="inp"><input id="search" type="search" placeholder="Name, ticker or address" autocomplete="off"></span></label>
+</div>
+
+<div class="coltabs" role="tablist" aria-label="Columns">
+  <button type="button" role="tab" data-tab="new" aria-selected="true">New Pairs</button>
+  <button type="button" role="tab" data-tab="final" aria-selected="false">Final Stretch</button>
+  <button type="button" role="tab" data-tab="migrated" aria-selected="false">Migrated</button>
+</div>
+
+<main class="cols" id="cols" data-active="new">
+  <section class="col" data-col="new" aria-labelledby="h-new">
+    <header><span class="dot new"></span><h2 id="h-new">New Pairs</h2><span class="count label" id="cnt-new">0</span><span class="paused label" hidden>Paused</span><button class="fbtn label" type="button" data-filter="new">Filters</button></header>
+    <div class="list" id="list-new"><p class="empty">Waiting for the next launch…</p></div>
+  </section>
+  <section class="col" data-col="final" aria-labelledby="h-final">
+    <header><span class="dot final"></span><h2 id="h-final">Final Stretch</h2><span class="count label" id="cnt-final">0</span><span class="paused label" hidden>Paused</span><button class="fbtn label" type="button" data-filter="final">Filters</button></header>
+    <div class="list" id="list-final"><p class="empty">Coins show up here once their bonding curve passes <span class="fmin">50</span>%.</p></div>
+  </section>
+  <section class="col" data-col="migrated" aria-labelledby="h-migrated">
+    <header><span class="dot migrated"></span><h2 id="h-migrated">Migrated</h2><span class="count label" id="cnt-migrated">0</span><span class="paused label" hidden>Paused</span><button class="fbtn label" type="button" data-filter="migrated">Filters</button></header>
+    <div class="list" id="list-migrated"><p class="empty">Coins that finish their bonding curve and move to a trading pool land here.</p></div>
+  </section>
+</main>
+
+<p class="risk">Meme coins are extremely risky and most go to zero. Trades are signed by your own wallet, settle on Solana and can't be reversed. Nothing here is financial advice.</p>
+
+<!-- coin drawer -->
+<aside class="drawer" id="drawer" hidden aria-label="Coin details">
+  <div class="dr-in">
+    <button class="xbtn label" type="button" id="drClose">Close ✕</button>
+    <div class="dr-head">
+      <img id="drImg" alt="" referrerpolicy="no-referrer">
+      <div><h3 id="drName">—</h3><div class="dr-sym label" id="drSym"></div>
+        <button class="addr label" type="button" id="drMint" title="Copy address"></button></div>
+    </div>
+    <p class="dr-desc" id="drDesc"></p>
+    <div class="dr-stats" id="drStats"></div>
+    <div class="dr-prog"><div class="pbar" id="drBar"></div><span class="label" id="drProg"></span></div>
+    <div class="dr-chart" id="drChart"></div>
+    <div class="trade">
+      <div class="tr-tabs"><button type="button" class="on" data-side="buy">Buy</button><button type="button" data-side="sell">Sell</button></div>
+      <div class="tr-body" data-pane="buy">
+        <div class="amts" id="buyAmts"><button type="button" data-v="0.05">0.05</button><button type="button" data-v="0.1">0.1</button><button type="button" data-v="0.5">0.5</button><button type="button" data-v="1">1</button></div>
+        <label class="field" for="buyCustom"><span class="label">Amount</span><span class="inp"><input id="buyCustom" type="number" min="0.001" max="100" step="0.01" value="0.1" inputmode="decimal"><em>SOL</em></span></label>
+        <button class="btn mint wide" type="button" id="buyBtn">Buy</button>
+      </div>
+      <div class="tr-body" data-pane="sell" hidden>
+        <div class="amts" id="sellAmts"><button type="button" data-v="25%">25%</button><button type="button" data-v="50%">50%</button><button type="button" data-v="75%">75%</button><button type="button" data-v="100%">100%</button></div>
+        <p class="hint">Sells that share of the coin your wallet holds.</p>
+      </div>
+      <p class="tr-msg" id="trMsg" role="status"></p>
+    </div>
+    <div class="dr-links" id="drLinks"></div>
+  </div>
+</aside>
+
+<!-- filters -->
+<div class="pop" id="filterPop" hidden role="dialog" aria-label="Column filters">
+  <h4 id="fpTitle">Filters</h4>
+  <label class="field" for="fMinMc"><span class="label">Min market cap</span><span class="inp"><em>$</em><input id="fMinMc" type="number" min="0" step="1000" placeholder="0"></span></label>
+  <label class="field" for="fMaxMc"><span class="label">Max market cap</span><span class="inp"><em>$</em><input id="fMaxMc" type="number" min="0" step="1000" placeholder="No limit"></span></label>
+  <label class="field" for="fMinVol"><span class="label">Min volume</span><span class="inp"><em>$</em><input id="fMinVol" type="number" min="0" step="500" placeholder="0"></span></label>
+  <label class="field" for="fMinHold"><span class="label">Min holders</span><span class="inp"><input id="fMinHold" type="number" min="0" step="10" placeholder="0"></span></label>
+  <label class="field" for="fMaxTop"><span class="label">Max top 10 holders %</span><span class="inp"><input id="fMaxTop" type="number" min="0" max="100" step="1" placeholder="No limit"><em>%</em></span></label>
+  <label class="field" for="fMaxDev"><span class="label">Max dev holds %</span><span class="inp"><input id="fMaxDev" type="number" min="0" max="100" step="1" placeholder="No limit"><em>%</em></span></label>
+  <label class="check"><input id="fNoDevSold" type="checkbox"> Hide coins where the dev sold</label>
+  <label class="check"><input id="fSocials" type="checkbox"> Has at least one social link</label>
+  <label class="check"><input id="fImage" type="checkbox"> Has an image</label>
+  <label class="field" for="fHide"><span class="label">Hide names containing</span><span class="inp"><input id="fHide" type="text" placeholder="e.g. test, rug"></span></label>
+  <div class="pop-actions"><button class="btn small alt" type="button" id="fReset">Reset</button><button class="btn small" type="button" id="fApply">Apply</button></div>
+</div>
+
+<!-- wallet -->
+<div class="modal" id="walletModal" hidden role="dialog" aria-modal="true" aria-labelledby="wTitle">
+  <div class="dialog">
+    <button class="xbtn label" type="button" data-close>Close ✕</button>
+    <h3 id="wTitle">CONNECT</h3>
+    <p id="wSub">Pick the Solana wallet you want to trade with. Orbit never sees your keys: every trade opens in your wallet for you to approve.</p>
+    <div id="wList"></div>
+    <div id="wConnected" hidden>
+      <div class="wrow"><canvas id="wIdent" width="5" height="5"></canvas><span><b id="wAddr"></b><small id="wKind"></small></span></div>
+      <button class="btn alt small" type="button" id="wDisconnect">Disconnect</button>
+    </div>
+    <p class="wmsg" id="wMsg" role="status"></p>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="https://unpkg.com/@solana/web3.js@1.98.0/lib/index.iife.min.js"></script>
+<script src="/radar.js"></script>
+</body>
+</html>

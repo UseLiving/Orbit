@@ -1,0 +1,12 @@
+{
+  "name": "orbit",
+  "version": "1.0.0",
+  "description": "Orbit: pixel crypto arcade with a live Radar board for new Solana meme coins (New Pairs, Final Stretch, Migrated).",
+  "type": "module",
+  "private": true,
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node server.js",
+    "demo": "MOCK=1 node server.js"
+  }
+}
